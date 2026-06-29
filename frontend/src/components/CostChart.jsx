@@ -1,19 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
-const data = [
-  { date: 'Jan 1', cost: 100 },
-  { date: 'Jan 2', cost: 105 },
-  { date: 'Jan 3', cost: 98 },
-  { date: 'Jan 4', cost: 110 },
-  { date: 'Jan 5', cost: 850 },
-  { date: 'Jan 6', cost: 102 },
-  { date: 'Jan 7', cost: 95 },
-  { date: 'Jan 8', cost: 108 },
-  { date: 'Jan 9', cost: 99 },
-  { date: 'Jan 10', cost: 115 },
-]
-
-export default function CostChart() {
+export default function CostChart({ data = [] }) {
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
       <h2 className="text-white font-semibold mb-4">Daily Cloud Spend</h2>

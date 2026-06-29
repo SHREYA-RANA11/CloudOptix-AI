@@ -1,52 +1,70 @@
+import { useEffect, useState } from 'react'
 import StatCard from '../components/StatCard'
 import CostChart from '../components/CostChart'
 import RecommendationCard from '../components/RecommendationCard'
 import AlertBox from '../components/AlertBox'
-
-const recommendations = [
-  { resource: 'EC2-001', issue: 'CPU usage only 8%, Memory 25%', suggestion: 'Downsize to t3.small', saving: '$60/mo' },
-  { resource: 'RDS-002', issue: 'Database idle 70% of time', suggestion: 'Switch to reserved instance', saving: '$80/mo' },
-  { resource: 'S3-Bucket-05', issue: 'No access in 90 days', suggestion: 'Move to Glacier storage tier', saving: '$30/mo' },
-]
-
-const alerts = [
-  { service: 'EC2', date: 'Jan 5, 2026', normal: 105, detected: 850 },
-  { service: 'Lambda', date: 'Jan 12, 2026', normal: 40, detected: 310 },
-]
+import { getCostData, getRecommendations, getAlerts } from '../services/api'
 
 export default function Dashboard() {
+  const [costData, setCostData] = useState([])
+  const [recommendations, setRecommendations] = useState([])
+  const [alerts, setAlerts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([getCostData(), getRecommendations(), getAlerts()])
+      .then(([cost, recs, alrts]) => {
+        setCostData(cost.data.data)
+        setRecommendations(recs.data.data)
+        setAlerts(alrts.data.data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err)
+        setLoading(false)
+      })
+  }, [])
+
+  const totalSavings = recommendations.reduce((sum, r) => {
+    const num = parseInt(r.saving.replace(/[^0-9]/g, ''))
+    return sum + num
+  }, 0)
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-96 text-gray-400">
+      Loading CloudOptix data...
+    </div>
+  )
+
   return (
     <main className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold text-white mb-6">Dashboard Overview</h1>
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard title="Total Monthly Spend" value="$1,240" subtitle="June 2026" color="blue" />
-        <StatCard title="Potential Savings" value="$420" subtitle="AI recommended" color="green" />
-        <StatCard title="Anomalies Detected" value="2" subtitle="This month" color="red" />
+        <StatCard title="Potential Savings" value={`$${totalSavings}`} subtitle="AI recommended" color="green" />
+        <StatCard title="Anomalies Detected" value={alerts.length} subtitle="This month" color="red" />
         <StatCard title="Resources Monitored" value="14" subtitle="Across AWS, GCP" color="purple" />
       </div>
 
-      {/* Chart */}
       <div className="mb-6">
-        <CostChart />
+        <CostChart data={costData} />
       </div>
 
-      {/* Recommendations + Alerts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h2 className="text-white font-semibold mb-3">AI Recommendations</h2>
           <div className="flex flex-col gap-3">
-            {recommendations.map((r, i) => (
-              <RecommendationCard key={i} {...r} />
+            {recommendations.map((r) => (
+              <RecommendationCard key={r.id} {...r} />
             ))}
           </div>
         </div>
         <div>
           <h2 className="text-white font-semibold mb-3">Anomaly Alerts</h2>
           <div className="flex flex-col gap-3">
-            {alerts.map((a, i) => (
-              <AlertBox key={i} {...a} />
+            {alerts.map((a) => (
+              <AlertBox key={a.id} {...a} />
             ))}
           </div>
         </div>
