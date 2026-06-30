@@ -10,6 +10,7 @@ app.use(express.json())
 app.use('/api/cost', require('./routes/cost'))
 app.use('/api/recommendations', require('./routes/recommendations'))
 app.use('/api/alerts', require('./routes/alerts'))
+app.use('/api/analyze', require('./routes/analyze'))
 
 app.get('/', (req, res) => {
   res.json({ message: 'CloudOptix API running' })
