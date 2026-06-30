@@ -3,6 +3,7 @@ import StatCard from '../components/StatCard'
 import CostChart from '../components/CostChart'
 import RecommendationCard from '../components/RecommendationCard'
 import AlertBox from '../components/AlertBox'
+import AIAnalyzer from '../components/AIAnalyzer'
 import { getCostData, getRecommendations, getAlerts } from '../services/api'
 
 export default function Dashboard() {
@@ -45,6 +46,10 @@ export default function Dashboard() {
         <StatCard title="Potential Savings" value={`$${totalSavings}`} subtitle="AI recommended" color="green" />
         <StatCard title="Anomalies Detected" value={alerts.length} subtitle="This month" color="red" />
         <StatCard title="Resources Monitored" value="14" subtitle="Across AWS, GCP" color="purple" />
+      </div>
+
+      <div className="mb-6">
+        <AIAnalyzer />
       </div>
 
       <div className="mb-6">
