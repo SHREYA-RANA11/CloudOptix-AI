@@ -20,7 +20,7 @@ export default function AIAnalyzer() {
     setLoading(true)
     setResult(null)
     try {
-      const res = await axios.post('http://localhost:5000/api/analyze', {
+      const res = await axios.post('https://cloudoptix-ai-1.onrender.com', {
         cpu: parseFloat(form.cpu),
         memory: parseFloat(form.memory),
         cost: parseFloat(form.cost),
