@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://cloudoptix-ai.onrender.com'
+  baseURL: 'https://cloudoptix-ai.onrender.com/api'
 })
 
 export const getCostData = () => API.get('/cost')
